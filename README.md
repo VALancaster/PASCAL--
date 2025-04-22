@@ -232,3 +232,33 @@ end.
 - `void ExecuteBlock(ASTNode*)`, `void ExecuteIf(ASTNode*)` и т.п.;
 - Использует `RPNExecutor` и `SymbolTable`.
 
+### 7. Класс `Lexer` и `Token`
+
+**Описание:** Отвечает за лексический анализ программы — разбиение текста на лексемы.
+
+**Типы токенов:**
+
+
+enum class TokenType {
+  Keyword, Identifier, Number, Operator, Separator, StringLiteral, EndOfFile, ...
+};
+
+### 8. Класс `Translator`
+
+**Описание:** Связывает парсинг, построение дерева и генерацию постфиксной формы.
+
+**Методы:**
+
+- `ASTNode* BuildAST(const std::vector<Token>& tokens)`
+- `std::vector<Token> GenerateRPN(ASTNode* node)`
+
+### Хранение программы
+
+Программа хранится как дерево (AST), реализованное через `ASTNode` с дочерними узлами.
+
+Каждый узел может представлять:
+- оператор (`Assign`, `If`, `Read`, `Write`);
+- выражение (`BinaryOp`, `Literal`, `Variable`);
+- блок (`BeginEnd`).
+
+Дерево строится при разборе программы и используется `ProgramExecutor` для запуска.
