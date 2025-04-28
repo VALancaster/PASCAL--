@@ -155,52 +155,10 @@ end.
 
 ## Список объектов и основных алгоритмов
 
-### 1. Класс `Symbol`
-
-**Описание:** Представляет переменную или константу.
-
-**Поля:**
-
-- `std::string name` — имя;
-- `enum Type { Integer, Double }` — тип;
-- `union { int i; double d; } value` — значение.
-
-**Методы:**
-
-- `SetValue(int)` / `SetValue(double)` — установка значения;
-- `GetValue()` — получение значения;
-- `GetType()` — получение типа.
 
 ---
 
-### 2. Класс `SymbolTable` (абстрактный базовый)
-
-**Описание:** Хранит символы в удобной структуре (дерево, хеш-таблица и т.п.)
-
-**Методы:**
-
-- `virtual void Insert(const Symbol&) = 0`;
-- `virtual Symbol* Lookup(const std::string&) = 0`;
-- `virtual void Clear() = 0`.
-
-> Будут реализованы конкретные реализации: `HashSymbolTable`, `TreeSymbolTable` и др.
-
----
-
-### 3. Класс `ExpressionParser`
-
-**Описание:** Парсит арифметические и условные выражения в постфиксную форму.
-
-**Методы:**
-
-- `std::vector<Token> Parse(const std::string& expr)` — преобразование в постфикс;
-- `bool Validate()` — проверка корректности выражения.
-
-> Используется алгоритм сортировочной станции (Шунта).
-
----
-
-### 4. Класс `RPNExecutor`
+### 1. Класс `PostfixExecutor`
 
 **Описание:** Выполняет выражения в постфиксной форме через стек.
 
@@ -212,7 +170,7 @@ end.
 
 ---
 
-### 5. Класс `ASTNode` и `ProgramTree`
+### 2. Класс `HierarchicalList`
 
 **Описание:** Представляют иерархический текст программы.
 
@@ -224,7 +182,7 @@ end.
 
 ---
 
-### 6. Класс `ProgramExecutor`
+### 3. Класс `ProgramExecutor`
 
 **Описание:** Главный интерпретатор — обходит дерево программы и выполняет действия.
 
@@ -234,7 +192,7 @@ end.
 - `void ExecuteBlock(ASTNode*)`, `void ExecuteIf(ASTNode*)` и т.п.;
 - Использует `RPNExecutor` и `SymbolTable`.
 
-### 7. Класс `Lexer` и `Token`
+### 4. Класс `Lexer`
 
 **Описание:** Отвечает за лексический анализ программы — разбиение текста на лексемы.
 
@@ -245,22 +203,12 @@ enum class TokenType {
   Keyword, Identifier, Number, Operator, Separator, StringLiteral, EndOfFile, ...
 };
 
-### 8. Класс `Translator`
+### 5. Класс `Parser`
 
-**Описание:** Связывает парсинг, построение дерева и генерацию постфиксной формы.
+**Описание:** Выполняет парсинг и проверку на корректность грамматики.
 
 **Методы:**
 
 - `ASTNode* BuildAST(const std::vector<Token>& tokens)`
 - `std::vector<Token> GenerateRPN(ASTNode* node)`
 
-### Хранение программы
-
-Программа хранится как дерево (AST), реализованное через `ASTNode` с дочерними узлами.
-
-Каждый узел может представлять:
-- оператор (`Assign`, `If`, `Read`, `Write`);
-- выражение (`BinaryOp`, `Literal`, `Variable`);
-- блок (`BeginEnd`).
-
-Дерево строится при разборе программы и используется `ProgramExecutor` для запуска.
